@@ -120,19 +120,32 @@ export const MonacoEditorWrapper: React.FC<MonacoEditorWrapperProps> = ({
 
     const disposable = editor.onDidChangeModelContent(() => {
       const newValue = editor.getValue();
-      onChange(newValue);
+      // Only call onChange if the value actually changed and it's different from the prop
+      if (newValue !== value) {
+        onChange(newValue);
+      }
     });
 
     return () => {
       disposable.dispose();
       editor.dispose();
+      editorRef.current = null;
     };
-  }, []);
+  }, []); // Keep empty dependency array - editor should only be created once
 
   // Update editor content when value prop changes externally
   useEffect(() => {
-    if (editorRef.current && editorRef.current.getValue() !== value) {
-      editorRef.current.setValue(value);
+    if (editorRef.current) {
+      const currentValue = editorRef.current.getValue();
+      // Only update if the value is actually different to avoid cursor jumps
+      if (currentValue !== value) {
+        const position = editorRef.current.getPosition();
+        editorRef.current.setValue(value);
+        // Restore cursor position if possible
+        if (position) {
+          editorRef.current.setPosition(position);
+        }
+      }
     }
   }, [value]);
 

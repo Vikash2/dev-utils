@@ -313,6 +313,7 @@ export const UniversalEditor: React.FC<UniversalEditorProps> = ({ isEmbedded = f
       {/* Main Content - Full Width Editor */}
       <div className="flex-1 flex overflow-hidden">
         <MonacoEditorWrapper
+          key={activeTabId} // Force re-render when switching tabs
           value={activeTab.content}
           language={activeTab.language as any}
           onChange={handleContentChange}

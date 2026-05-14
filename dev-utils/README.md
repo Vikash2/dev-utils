@@ -225,25 +225,65 @@ npm run build
 
 Output goes to `dist/`. The app is a standard SPA — serve `index.html` for all routes.
 
+### ⚠️ Important: SPA Routing Configuration
+
+This app uses client-side routing. Direct URL access (e.g., `/universal-editor`) will result in 404 errors unless your server is configured to serve `index.html` for all routes.
+
+**✅ All configuration files are included in the build!**
+
+The `dist/` folder includes:
+- `_redirects` - Netlify configuration
+- `vercel.json` - Vercel configuration  
+- `.htaccess` - Apache configuration
+- `404.html` - GitHub Pages fallback
+
+**📚 See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.**
+
 ### Vercel
 
 ```bash
-npx vercel
+npm run build
+npx vercel --prod
 ```
+
+✅ Works out of the box with included `vercel.json`
 
 ### Netlify
 
 ```bash
+npm run build
 npx netlify deploy --prod --dir=dist
 ```
+
+✅ Works out of the box with included `_redirects` and `netlify.toml`
+
+### GitHub Pages
+
+```bash
+npm run build
+npx gh-pages -d dist
+```
+
+✅ Works with included `404.html` redirect fallback
 
 ### Nginx (self-hosted)
 
 ```nginx
-location / {
-  try_files $uri $uri/ /index.html;
+server {
+  listen 80;
+  server_name your-domain.com;
+  root /var/www/html;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
 }
 ```
+
+### Apache (self-hosted)
+
+✅ Works out of the box with included `.htaccess` file
 
 ### Docker
 
@@ -257,7 +297,21 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
+```
+
+**nginx.conf:**
+```nginx
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+  index index.html;
+  
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
 ```
 
 ---

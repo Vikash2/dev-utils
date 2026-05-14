@@ -4,7 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dev-utils</title>
+    <meta name="description" content="Dev Utils - Universal Code Editor, Diff Checker, JSON & XML Formatter" />
+    <title>Dev Utils - Code Editor & Formatter Tools</title>
+    
+    <!-- Handle GitHub Pages SPA redirect -->
+    <script>
+      (function() {
+        var redirect = sessionStorage.getItem('redirect');
+        if (redirect) {
+          sessionStorage.removeItem('redirect');
+          history.replaceState(null, '', redirect);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
