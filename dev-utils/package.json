@@ -11,6 +11,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@types/react-window": "^1.8.8",
     "diff-match-patch": "^1.0.5",
     "fast-xml-parser": "^5.8.0",
     "framer-motion": "^12.38.0",
@@ -22,6 +23,7 @@
     "react-dom": "^19.2.6",
     "react-dropzone": "^14.3.5",
     "react-router-dom": "^7.15.0",
+    "react-window": "^2.2.7",
     "sql-formatter": "^15.3.0",
     "xml-formatter": "^3.7.0",
     "zustand": "^5.0.13"

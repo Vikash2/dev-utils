@@ -184,9 +184,15 @@ export const MonacoEditorWrapper: React.FC<MonacoEditorWrapperProps> = ({
       className="w-full h-full relative"
       style={{ minHeight: '400px' }}
     >
-      {/* Placeholder text when editor is empty */}
-      {value === '' && (
-        <div className="absolute top-0 left-0 p-4 text-gray-500 dark:text-gray-600 pointer-events-none font-mono text-sm">
+      {/* Placeholder text when editor is empty - only show when no content and not focused */}
+      {value.length === 0 && !readOnly && (
+        <div 
+          className="absolute top-4 left-16 text-gray-400 dark:text-gray-600 pointer-events-none font-mono text-sm z-0"
+          style={{ 
+            opacity: editorRef.current?.hasTextFocus() ? 0 : 1,
+            transition: 'opacity 0.2s ease-in-out'
+          }}
+        >
           Paste your code here or use the toolbar to open a file...
         </div>
       )}
