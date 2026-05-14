@@ -35,6 +35,44 @@ export const VisualDiffViewer: React.FC<VisualDiffViewerProps> = ({ original, mo
     );
   }, [diffLines]);
 
+  // Flatten grouped diffs for virtualization - moved to top level
+  const flattenedItems = useMemo(() => {
+    const items: Array<{ type: 'line' | 'collapse-button'; data: any; key: string }> = [];
+    
+    groupedDiffs.forEach((group) => {
+      if (group.type === 'equal' && group.lines.length > 3) {
+        // Add collapse button
+        items.push({
+          type: 'collapse-button',
+          data: { group, isExpanded: expandedSections.has(group.id) },
+          key: `collapse-${group.id}`,
+        });
+        
+        // Add lines if expanded
+        if (expandedSections.has(group.id)) {
+          group.lines.forEach((line, idx) => {
+            items.push({
+              type: 'line',
+              data: { line, index: idx },
+              key: `line-${group.id}-${idx}`,
+            });
+          });
+        }
+      } else {
+        // Add all lines directly
+        group.lines.forEach((line, idx) => {
+          items.push({
+            type: 'line',
+            data: { line, index: idx },
+            key: `line-${group.id}-${idx}`,
+          });
+        });
+      }
+    });
+    
+    return items;
+  }, [groupedDiffs, expandedSections]);
+
   const toggleSection = (id: number) => {
     const newExpanded = new Set(expandedSections);
     if (newExpanded.has(id)) {
@@ -184,44 +222,6 @@ export const VisualDiffViewer: React.FC<VisualDiffViewerProps> = ({ original, mo
   };
 
   const renderUnifiedView = () => {
-    // Flatten grouped diffs for virtualization
-    const flattenedItems = useMemo(() => {
-      const items: Array<{ type: 'line' | 'collapse-button'; data: any; key: string }> = [];
-      
-      groupedDiffs.forEach((group) => {
-        if (group.type === 'equal' && group.lines.length > 3) {
-          // Add collapse button
-          items.push({
-            type: 'collapse-button',
-            data: { group, isExpanded: expandedSections.has(group.id) },
-            key: `collapse-${group.id}`,
-          });
-          
-          // Add lines if expanded
-          if (expandedSections.has(group.id)) {
-            group.lines.forEach((line, idx) => {
-              items.push({
-                type: 'line',
-                data: { line, index: idx },
-                key: `line-${group.id}-${idx}`,
-              });
-            });
-          }
-        } else {
-          // Add all lines directly
-          group.lines.forEach((line, idx) => {
-            items.push({
-              type: 'line',
-              data: { line, index: idx },
-              key: `line-${group.id}-${idx}`,
-            });
-          });
-        }
-      });
-      
-      return items;
-    }, [groupedDiffs, expandedSections]);
-
     const UnifiedViewRow = ({ 
       index, 
       style
